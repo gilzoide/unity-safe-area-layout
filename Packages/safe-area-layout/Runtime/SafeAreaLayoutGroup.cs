@@ -10,12 +10,21 @@ namespace Gilzoide.SafeAreaLayout
     {
         public static bool IsDrivingLayout => Application.isPlaying;
 
+        [Tooltip("Whether safe area's top edge will be respected")]
+        public bool TopEdge = true;
+        [Tooltip("Whether safe area's left edge will be respected")]
+        public bool LeftEdge = true;
+        [Tooltip("Whether safe area's right edge will be respected")]
+        public bool RightEdge = true;
+        [Tooltip("Whether safe area's bottom edge will be respected")]
+        public bool BottomEdge = true;
+
         private RectTransform SelfRectTransform => (RectTransform) transform;
 
         private readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
+        private readonly DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
         private readonly Vector3[] _worldCorners = new Vector3[4];
         private Rect _worldRect;
-        private DrivenRectTransformTracker _drivenRectTransformTracker;
 
         private void OnEnable()
         {
@@ -47,8 +56,8 @@ namespace Gilzoide.SafeAreaLayout
             }
 
             Rect safeArea = Screen.safeArea;
-            float leftMargin = Mathf.Max(0, safeArea.xMin - _worldRect.xMin) / horizontalSize;
-            float rightMargin = Mathf.Max(0, _worldRect.xMax - safeArea.xMax) / horizontalSize;
+            float leftMargin = LeftEdge ? Mathf.Max(0, safeArea.xMin - _worldRect.xMin) / horizontalSize : 0;
+            float rightMargin = RightEdge ? Mathf.Max(0, _worldRect.xMax - safeArea.xMax) / horizontalSize : 0;
 
             foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
             {
@@ -65,8 +74,8 @@ namespace Gilzoide.SafeAreaLayout
             }
 
             Rect safeArea = Screen.safeArea;
-            float bottomMargin = Mathf.Max(0, safeArea.yMin - _worldRect.yMin) / verticalSize;
-            float topMargin = Mathf.Max(0, _worldRect.yMax - safeArea.yMax) / verticalSize;
+            float bottomMargin = BottomEdge ? Mathf.Max(0, safeArea.yMin - _worldRect.yMin) / verticalSize : 0;
+            float topMargin = TopEdge ? Mathf.Max(0, _worldRect.yMax - safeArea.yMax) / verticalSize : 0;
 
             foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
             {
@@ -124,5 +133,13 @@ namespace Gilzoide.SafeAreaLayout
             Vector3 topRight = _worldCorners[2];
             _worldRect = Rect.MinMaxRect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            RefreshChildrenAnchors();
+            LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
+        }
+#endif
     }
 }
