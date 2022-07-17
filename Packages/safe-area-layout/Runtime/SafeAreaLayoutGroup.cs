@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +8,12 @@ namespace Gilzoide.SafeAreaLayout
     [RequireComponent(typeof(RectTransform))]
     public class SafeAreaLayoutGroup : MonoBehaviour, ILayoutGroup
     {
-        public static bool IsDrivingLayout => Application.isPlaying;
+#if UNITY_EDITOR
+        public static bool IsDrivingLayout => Application.isPlaying || _previewInEditor;
+        private static bool _previewInEditor = false;
+#else
+        public const bool IsDrivingLayout = true;
+#endif
 
         [Tooltip("Whether safe area's top edge will be respected")]
         public bool TopEdge = true;
@@ -22,7 +27,7 @@ namespace Gilzoide.SafeAreaLayout
         private RectTransform SelfRectTransform => (RectTransform) transform;
 
         private readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
-        private readonly DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
+        private DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
         private readonly Vector3[] _worldCorners = new Vector3[4];
         private Rect _worldRect;
 
@@ -67,6 +72,11 @@ namespace Gilzoide.SafeAreaLayout
 
         public void SetLayoutVertical()
         {
+            if (!IsDrivingLayout)
+            {
+                return;
+            }
+
             float verticalSize = _worldRect.size.y;
             if (verticalSize <= 0)
             {
@@ -95,13 +105,13 @@ namespace Gilzoide.SafeAreaLayout
 
         private void RefreshChildrenAnchors()
         {
-            _drivenRectTransformTracker.Clear();
             if (!IsDrivingLayout)
             {
-                _childrenAnchors.Clear();
+                ClearChildrenAnchors();
                 return;
             }
 
+            _drivenRectTransformTracker.Clear();
             var childrenToUntrack = new HashSet<RectTransform>(_childrenAnchors.Keys);
             foreach (Transform child in transform)
             {
@@ -137,8 +147,41 @@ namespace Gilzoide.SafeAreaLayout
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            RefreshChildrenAnchors();
             LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
+        }
+
+        [CustomEditor(typeof(SafeAreaLayoutGroup)), CanEditMultipleObjects]
+        public class SafeAreaLayoutGroupEditor : Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                serializedObject.Update();
+                DrawDefaultInspector();
+                serializedObject.ApplyModifiedProperties();
+
+                bool preview = HoverButton("Hover to Preview Layout");
+                if (preview != _previewInEditor)
+                {
+                    SetPreviewEnabled(preview);
+                }
+            }
+
+            private void SetPreviewEnabled(bool enabled)
+            {
+                _previewInEditor = enabled;
+                foreach (SafeAreaLayoutGroup safeArea in FindObjectsOfType<SafeAreaLayoutGroup>())
+                {
+                    safeArea.RefreshChildrenAnchors();
+                    LayoutRebuilder.MarkLayoutForRebuild(safeArea.SelfRectTransform);
+                }
+                SceneView.RepaintAll();
+            }
+
+            private static bool HoverButton(string content)
+            {
+                GUILayout.Box(content, EditorStyles.miniButton);
+                return GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
+            }
         }
 #endif
     }
