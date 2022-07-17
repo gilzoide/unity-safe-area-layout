@@ -1,0 +1,9 @@
+{
+  "name": "com.gilzoide.safe-area-layout",
+  "displayName": "Safe Area Layout",
+  "version": "1.0.0",
+  "description": "uGUI layout controller that respects the Safe Area",
+  "author": {
+    "name": "Gil Barbosa Reis"
+  }
+}
