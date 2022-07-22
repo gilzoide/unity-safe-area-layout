@@ -5,14 +5,16 @@ using UnityEngine.UI;
 
 namespace Gilzoide.SafeAreaLayout
 {
-    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(RectTransform)), ExecuteAlways]
     public class SafeAreaLayoutGroup : MonoBehaviour, ILayoutGroup
     {
+        public bool IsDrivingLayout => (Application.isPlaying || _previewInEditor)
+            && _canvas != null && _canvas.renderMode != RenderMode.WorldSpace;
+
 #if UNITY_EDITOR
-        public static bool IsDrivingLayout => Application.isPlaying || _previewInEditor;
         private static bool _previewInEditor = false;
 #else
-        public const bool IsDrivingLayout = true;
+        private const bool _previewInEditor = false;
 #endif
 
         [Tooltip("Whether safe area's top edge will be respected")]
@@ -29,15 +31,18 @@ namespace Gilzoide.SafeAreaLayout
         private readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
         private DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
         private readonly Vector3[] _worldCorners = new Vector3[4];
-        private Rect _worldRect;
+        private Canvas _canvas;
+        private Rect _screenRect;
 
         private void OnEnable()
         {
+            _canvas = GetComponentInParent<Canvas>();
             RefreshChildrenAnchors();
         }
 
         private void OnDisable()
         {
+            _canvas = null;
             ClearChildrenAnchors();
         }
 
@@ -53,16 +58,16 @@ namespace Gilzoide.SafeAreaLayout
                 return;
             }
 
-            RefreshWorldRect();
-            float horizontalSize = _worldRect.size.x;
+            RefreshScreenRect();
+            float horizontalSize = _screenRect.size.x;
             if (horizontalSize <= 0)
             {
                 return;
             }
 
             Rect safeArea = Screen.safeArea;
-            float leftMargin = LeftEdge ? Mathf.Max(0, safeArea.xMin - _worldRect.xMin) / horizontalSize : 0;
-            float rightMargin = RightEdge ? Mathf.Max(0, _worldRect.xMax - safeArea.xMax) / horizontalSize : 0;
+            float leftMargin = LeftEdge ? Mathf.Max(0, safeArea.xMin - _screenRect.xMin) / horizontalSize : 0;
+            float rightMargin = RightEdge ? Mathf.Max(0, _screenRect.xMax - safeArea.xMax) / horizontalSize : 0;
 
             foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
             {
@@ -77,15 +82,15 @@ namespace Gilzoide.SafeAreaLayout
                 return;
             }
 
-            float verticalSize = _worldRect.size.y;
+            float verticalSize = _screenRect.size.y;
             if (verticalSize <= 0)
             {
                 return;
             }
 
             Rect safeArea = Screen.safeArea;
-            float bottomMargin = BottomEdge ? Mathf.Max(0, safeArea.yMin - _worldRect.yMin) / verticalSize : 0;
-            float topMargin = TopEdge ? Mathf.Max(0, _worldRect.yMax - safeArea.yMax) / verticalSize : 0;
+            float bottomMargin = BottomEdge ? Mathf.Max(0, safeArea.yMin - _screenRect.yMin) / verticalSize : 0;
+            float topMargin = TopEdge ? Mathf.Max(0, _screenRect.yMax - safeArea.yMax) / verticalSize : 0;
 
             foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
             {
@@ -136,13 +141,19 @@ namespace Gilzoide.SafeAreaLayout
             }
         }
 
-        private void RefreshWorldRect()
+        private void RefreshScreenRect()
         {
             SelfRectTransform.GetWorldCorners(_worldCorners);
 
             Vector3 bottomLeft = _worldCorners[0];
             Vector3 topRight = _worldCorners[2];
-            _worldRect = Rect.MinMaxRect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
+            if (_canvas.renderMode == RenderMode.ScreenSpaceCamera && _canvas.worldCamera != null)
+            {
+                Camera camera = _canvas.worldCamera;
+                bottomLeft = camera.WorldToScreenPoint(bottomLeft);
+                topRight = camera.WorldToScreenPoint(topRight);
+            }
+            _screenRect = Rect.MinMaxRect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
         }
 
 #if UNITY_EDITOR
