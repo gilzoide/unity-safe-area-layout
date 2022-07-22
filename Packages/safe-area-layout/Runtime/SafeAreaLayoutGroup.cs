@@ -172,7 +172,7 @@ namespace Gilzoide.SafeAreaLayout
                 foreach (SafeAreaLayoutGroup safeArea in FindObjectsOfType<SafeAreaLayoutGroup>())
                 {
                     safeArea.RefreshChildrenAnchors();
-                    LayoutRebuilder.MarkLayoutForRebuild(safeArea.SelfRectTransform);
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(safeArea.SelfRectTransform);
                 }
                 SceneView.RepaintAll();
             }
