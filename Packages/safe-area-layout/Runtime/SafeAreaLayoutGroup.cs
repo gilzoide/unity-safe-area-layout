@@ -125,6 +125,7 @@ namespace Gilzoide.SafeAreaLayout
                 if (!_childrenAnchors.ContainsKey(rectTransform))
                 {
                     _childrenAnchors[rectTransform] = new Anchors(rectTransform);
+                    LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
                 }
                 childrenToUntrack.Remove(rectTransform);
             }
