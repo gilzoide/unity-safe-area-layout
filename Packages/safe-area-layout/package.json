@@ -6,5 +6,6 @@
   "homepage": "https://github.com/gilzoide/unity-safe-area-layout",
   "author": {
     "name": "Gil Barbosa Reis"
-  }
+  },
+  "unity": "2017.2"
 }
