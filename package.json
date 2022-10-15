@@ -7,5 +7,12 @@
   "author": {
     "name": "Gil Barbosa Reis"
   },
-  "unity": "2017.2"
+  "unity": "2017.2",
+  "samples": [
+    {
+        "displayName": "Simple Sample",
+        "description": "Simple sample with a background image and text labels in each edge of the screen",
+        "path": "Samples~/SimpleSample"
+    }
+  ]
 }
