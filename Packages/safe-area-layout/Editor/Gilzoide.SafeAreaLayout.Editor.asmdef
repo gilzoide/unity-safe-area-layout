@@ -1,0 +1,18 @@
+{
+    "name": "Gilzoide.SafeAreaLayout.Editor",
+    "rootNamespace": "Gilzoide.SafeAreaLayout.Editor",
+    "references": [
+        "GUID:fd2e74c383d99ee42b26f035675e91df"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

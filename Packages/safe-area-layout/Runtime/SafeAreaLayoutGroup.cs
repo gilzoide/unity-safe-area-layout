@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,13 +7,13 @@ namespace Gilzoide.SafeAreaLayout
     [RequireComponent(typeof(RectTransform)), ExecuteAlways]
     public class SafeAreaLayoutGroup : MonoBehaviour, ILayoutGroup
     {
-        public bool IsDrivingLayout => (Application.isPlaying || _previewInEditor)
+        public bool IsDrivingLayout => (Application.isPlaying || PreviewInEditor)
             && _canvas != null && _canvas.renderMode != RenderMode.WorldSpace;
 
 #if UNITY_EDITOR
-        private static bool _previewInEditor = false;
+        public static bool PreviewInEditor = false;
 #else
-        private const bool _previewInEditor = false;
+        public const bool PreviewInEditor = false;
 #endif
 
         [Tooltip("Whether safe area's top edge will be respected")]
@@ -26,7 +25,7 @@ namespace Gilzoide.SafeAreaLayout
         [Tooltip("Whether safe area's bottom edge will be respected")]
         public bool BottomEdge = true;
 
-        private RectTransform SelfRectTransform => (RectTransform) transform;
+        public RectTransform SelfRectTransform => (RectTransform) transform;
 
         private readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
         private DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
@@ -65,7 +64,7 @@ namespace Gilzoide.SafeAreaLayout
                 return;
             }
 
-            Rect safeArea = Screen.safeArea;
+            Rect safeArea = SafeAreaUtility.GetSafeArea();
             float leftMargin = LeftEdge ? Mathf.Max(0, safeArea.xMin - _screenRect.xMin) / horizontalSize : 0;
             float rightMargin = RightEdge ? Mathf.Max(0, _screenRect.xMax - safeArea.xMax) / horizontalSize : 0;
 
@@ -88,7 +87,7 @@ namespace Gilzoide.SafeAreaLayout
                 return;
             }
 
-            Rect safeArea = Screen.safeArea;
+            Rect safeArea = SafeAreaUtility.GetSafeArea();
             float bottomMargin = BottomEdge ? Mathf.Max(0, safeArea.yMin - _screenRect.yMin) / verticalSize : 0;
             float topMargin = TopEdge ? Mathf.Max(0, _screenRect.yMax - safeArea.yMax) / verticalSize : 0;
 
@@ -160,40 +159,6 @@ namespace Gilzoide.SafeAreaLayout
         private void OnValidate()
         {
             LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
-        }
-
-        [CustomEditor(typeof(SafeAreaLayoutGroup)), CanEditMultipleObjects]
-        public class SafeAreaLayoutGroupEditor : Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                serializedObject.Update();
-                DrawDefaultInspector();
-                serializedObject.ApplyModifiedProperties();
-
-                bool preview = HoverButton("Hover to Preview Layout");
-                if (preview != _previewInEditor)
-                {
-                    SetPreviewEnabled(preview);
-                }
-            }
-
-            private void SetPreviewEnabled(bool enabled)
-            {
-                _previewInEditor = enabled;
-                foreach (SafeAreaLayoutGroup safeArea in FindObjectsOfType<SafeAreaLayoutGroup>())
-                {
-                    safeArea.RefreshChildrenAnchors();
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(safeArea.SelfRectTransform);
-                }
-                SceneView.RepaintAll();
-            }
-
-            private static bool HoverButton(string content)
-            {
-                GUILayout.Box(content, EditorStyles.miniButton);
-                return GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
-            }
         }
 #endif
     }
