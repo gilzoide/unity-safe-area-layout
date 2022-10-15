@@ -1,5 +1,5 @@
 # Safe Area Layout
-Unity GUI  [layout group](https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/UIAutoLayout.html#layout-groups)
+Unity GUI [layout group](https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/UIAutoLayout.html#layout-groups)
 that makes children respect the [Safe Area](https://docs.unity3d.com/ScriptReference/Screen-safeArea.html).
 It drives children's anchors while in Play Mode and supports [`LayoutElement.ignoreLayout`](https://docs.unity3d.com/Packages/com.unity.ugui@1.0/api/UnityEngine.UI.ILayoutIgnorer.html).
 
@@ -10,23 +10,14 @@ Either:
 - Install via [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html)
 using the following git URL:
 ```
-https://github.com/gilzoide/unity-safe-area-layout.git?path=/Packages/safe-area-layout
+https://github.com/gilzoide/unity-safe-area-layout.git
 ```
-- Add the git URL to your `Packages/manifest.json` file's dependencies:
-```json
-{
-  "dependencies": {
-// ...
-    "com.gilzoide.safe-area-layout": "https://github.com/gilzoide/unity-safe-area-layout.git?path=/Packages/safe-area-layout",
-// ...
-  }
-}
-```
-- Copy the folder [Packages/safe-area-layout](Packages/safe-area-layout) anywhere inside your project's `Assets` or `Packages` folder.
+
+- Clone this repository anywhere inside your project's `Assets` or `Packages` folder.
 
 
 ## How to use
-1. Add the [SafeAreaLayoutGroup](Packages/com.gilzoide.safe-area-layout/Runtime/SafeAreaLayoutGroup.cs)
+1. Add the [SafeAreaLayoutGroup](Runtime/SafeAreaLayoutGroup.cs)
    script anywhere in your UI hierarchy.
    Even objects with a `Canvas` are supported.
 2. (optional) Select the Safe Area edges that your layout group will respect.
