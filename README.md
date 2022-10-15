@@ -17,14 +17,13 @@ https://github.com/gilzoide/unity-safe-area-layout.git
 
 
 ## How to use
-1. Add the [SafeAreaLayoutGroup](Runtime/SafeAreaLayoutGroup.cs)
-   script anywhere in your UI hierarchy.
+1. Add the [SafeAreaLayoutGroup](Runtime/SafeAreaLayoutGroup.cs) script anywhere in your UI hierarchy.
    Even objects with a `Canvas` are supported.
 2. (optional) Select the Safe Area edges that your layout group will respect.
-3. (optional) Make specific children be ignored by the layout group by adding a `LayoutElement` to them and marking `Ignore Layout`.
+3. (optional) Make specific children be ignored by the layout group by adding the `IgnoreSafeArea` component.
    Useful for background images, for example.
-4. (optional) Use the [Device Simulator](https://docs.unity3d.com/Manual/device-simulator.html)
-   to simulate a device with Safe Area, like the iPhone X.
+   Alternatively, use `LayoutElement` components with the `Ignore Layout` flag marked as true.
+4. (optional) Use the [Device Simulator](https://docs.unity3d.com/Manual/device-simulator.html) to simulate a device with Safe Area, like the iPhone X.
    If you're using Unity 2020 or older, you need to install the [Device Simulator Package](https://docs.unity3d.com/Packages/com.unity.device-simulator@latest/index.html).
 5. (optional) Preview the driven layout while in Edit Mode by hovering over the `Hover to Preview Layout` button in the `SafeAreaLayoutGroup`'s inspector.
 6. Play the game (play the game, everybody play the gaaaame)
