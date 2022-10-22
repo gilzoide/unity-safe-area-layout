@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Gilzoide.SafeAreaLayout
 {
-    public readonly struct Anchors
+    public struct Anchors
     {
-        public readonly Vector2 AnchorMin;
-        public readonly Vector2 AnchorMax;
+        public Vector2 AnchorMin;
+        public Vector2 AnchorMax;
 
         public Anchors(Vector2 anchorMin, Vector2 anchorMax)
         {

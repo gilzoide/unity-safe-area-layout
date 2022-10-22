@@ -45,7 +45,7 @@ namespace Gilzoide.SafeAreaLayout.Editor
         {
             foreach (SafeAreaLayoutGroup safeArea in FindObjectsOfType<SafeAreaLayoutGroup>())
             {
-                safeArea.Invoke("RefreshChildrenAnchors", 0);
+                safeArea.RefreshChildrenAnchors();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(safeArea.SelfRectTransform);
             }
             SceneView.RepaintAll();

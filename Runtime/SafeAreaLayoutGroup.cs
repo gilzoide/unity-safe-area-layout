@@ -27,30 +27,30 @@ namespace Gilzoide.SafeAreaLayout
 
         public RectTransform SelfRectTransform => (RectTransform) transform;
 
-        private readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
-        private DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
-        private readonly Vector3[] _worldCorners = new Vector3[4];
-        private Canvas _canvas;
-        private Rect _screenRect;
+        protected readonly Dictionary<RectTransform, Anchors> _childrenAnchors = new Dictionary<RectTransform, Anchors>();
+        protected DrivenRectTransformTracker _drivenRectTransformTracker = new DrivenRectTransformTracker();
+        protected readonly Vector3[] _worldCorners = new Vector3[4];
+        protected Canvas _canvas;
+        protected Rect _screenRect;
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             _canvas = GetComponentInParent<Canvas>();
             RefreshChildrenAnchors();
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             _canvas = null;
             ClearChildrenAnchors();
         }
 
-        private void OnTransformChildrenChanged()
+        protected virtual void OnTransformChildrenChanged()
         {
             RefreshChildrenAnchors();
         }
 
-        public void SetLayoutHorizontal()
+        public virtual void SetLayoutHorizontal()
         {
             if (!IsDrivingLayout)
             {
@@ -74,7 +74,7 @@ namespace Gilzoide.SafeAreaLayout
             }
         }
 
-        public void SetLayoutVertical()
+        public virtual void SetLayoutVertical()
         {
             if (!IsDrivingLayout)
             {
@@ -97,7 +97,7 @@ namespace Gilzoide.SafeAreaLayout
             }
         }
 
-        private void ClearChildrenAnchors()
+        public void ClearChildrenAnchors()
         {
             _drivenRectTransformTracker.Clear();
             foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
@@ -107,7 +107,7 @@ namespace Gilzoide.SafeAreaLayout
             _childrenAnchors.Clear();
         }
 
-        private void RefreshChildrenAnchors()
+        public void RefreshChildrenAnchors()
         {
             if (!IsDrivingLayout)
             {
@@ -140,7 +140,7 @@ namespace Gilzoide.SafeAreaLayout
             }
         }
 
-        private void RefreshScreenRect()
+        protected void RefreshScreenRect()
         {
             SelfRectTransform.GetWorldCorners(_worldCorners);
 
@@ -156,7 +156,7 @@ namespace Gilzoide.SafeAreaLayout
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        protected virtual void OnValidate()
         {
             LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
         }
