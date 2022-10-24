@@ -30,7 +30,7 @@ openupm add com.gilzoide.safe-area-layout
 - Install via [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html)
 using the following git URL:
 ```
-https://github.com/gilzoide/unity-safe-area-layout.git#1.0.0
+https://github.com/gilzoide/unity-safe-area-layout.git#1.0.1
 ```
 
 - Clone this repository directly to your `Packages` folder or anywhere inside your project's `Assets`.
