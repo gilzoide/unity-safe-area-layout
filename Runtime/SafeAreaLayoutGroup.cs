@@ -103,7 +103,7 @@ namespace Gilzoide.SafeAreaLayout
             float bottomMargin = BottomEdge ? Mathf.Max(0, safeArea.yMin - _screenRect.yMin) / verticalSize : 0;
             float topMargin = TopEdge ? Mathf.Max(0, _screenRect.yMax - safeArea.yMax) / verticalSize : 0;
 
-            foreach ((RectTransform child, Anchors anchors) in _childrenAnchors)
+            foreach ((RectTransform child, _) in _childrenAnchors)
             {
                 new Anchors(child).WithVerticalMargins(bottomMargin, topMargin).ApplyTo(child);
             }
@@ -141,7 +141,6 @@ namespace Gilzoide.SafeAreaLayout
                 if (!_childrenAnchors.ContainsKey(rectTransform))
                 {
                     _childrenAnchors[rectTransform] = new Anchors(rectTransform);
-                    LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
                 }
                 childrenToUntrack.Remove(rectTransform);
             }
@@ -150,6 +149,8 @@ namespace Gilzoide.SafeAreaLayout
             {
                 _childrenAnchors.Remove(previousChild);
             }
+            
+            LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
         }
 
         protected void RefreshScreenRect()
