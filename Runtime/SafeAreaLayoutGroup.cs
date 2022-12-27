@@ -35,7 +35,7 @@ namespace Gilzoide.SafeAreaLayout
 
         protected virtual void OnEnable()
         {
-            _canvas = GetComponentInParent<Canvas>();
+            _canvas = FindRootCanvas();
             RefreshChildrenAnchors();
         }
 
@@ -48,6 +48,15 @@ namespace Gilzoide.SafeAreaLayout
         protected virtual void OnTransformChildrenChanged()
         {
             RefreshChildrenAnchors();
+        }
+
+        protected virtual void OnTransformParentChanged()
+        {
+            if (isActiveAndEnabled)
+            {
+                _canvas = FindRootCanvas();
+                LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
+            }
         }
 
         public virtual void SetLayoutHorizontal()
@@ -153,6 +162,12 @@ namespace Gilzoide.SafeAreaLayout
                 topRight = camera.WorldToScreenPoint(topRight);
             }
             _screenRect = Rect.MinMaxRect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
+        }
+
+        protected Canvas FindRootCanvas()
+        {
+            Canvas canvas = GetComponentInParent<Canvas>();
+            return canvas != null ? canvas.rootCanvas : null;
         }
 
 #if UNITY_EDITOR
