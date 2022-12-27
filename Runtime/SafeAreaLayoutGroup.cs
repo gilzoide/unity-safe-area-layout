@@ -58,7 +58,7 @@ namespace Gilzoide.SafeAreaLayout
             if (isActiveAndEnabled)
             {
                 _canvas = FindRootCanvas();
-                LayoutRebuilder.MarkLayoutForRebuild(SelfRectTransform);
+                RefreshChildrenAnchors();
             }
         }
 
