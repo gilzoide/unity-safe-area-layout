@@ -47,7 +47,10 @@ namespace Gilzoide.SafeAreaLayout
 
         protected virtual void OnTransformChildrenChanged()
         {
-            RefreshChildrenAnchors();
+            if (isActiveAndEnabled)
+            {
+                RefreshChildrenAnchors();
+            }
         }
 
         protected virtual void OnTransformParentChanged()
