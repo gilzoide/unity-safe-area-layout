@@ -23,15 +23,15 @@ It drives direct children's anchors while in Play Mode and supports [`LayoutElem
 Either:
 
 - Install using [openupm](https://openupm.com/):
-```
-openupm add com.gilzoide.safe-area-layout
-```
+  ```
+  openupm add com.gilzoide.safe-area-layout
+  ```
 
 - Install via [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html)
 using the following git URL:
-```
-https://github.com/gilzoide/unity-safe-area-layout.git#1.0.1
-```
+  ```
+  https://github.com/gilzoide/unity-safe-area-layout.git#1.0.2
+  ```
 
 - Clone this repository directly to your `Packages` folder or anywhere inside your project's `Assets`.
 
